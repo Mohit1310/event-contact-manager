@@ -1,24 +1,30 @@
+import { NextResponse } from 'next/server';
 import connectDb from '@/lib/connectDb';
 import Event from '@/models/event';
-import { NextResponse } from 'next/server';
 
 export async function GET() {
   await connectDb();
   try {
     const events = await Event.find({});
     return NextResponse.json(events);
-  } catch (err: any) {
-    return NextResponse.json({ error: err.message });
+  } catch (error) {
+    return NextResponse.json(
+      { success: false, error: 'Internal Server Error' },
+      { status: 500 }
+    );
   }
 }
 
-export async function POST(req: Request) {
+export async function POST(request: Request) {
   await connectDb();
   try {
-    const body = await req.json();
+    const body = await request.json();
     const event = await Event.create(body);
-    return NextResponse.json(event);
-  } catch (err: any) {
-    return NextResponse.json({ error: err.message });
+    return NextResponse.json({ success: true, data: event }, { status: 201 });
+  } catch (error) {
+    return NextResponse.json(
+      { success: false, error: 'Internal Server Error' },
+      { status: 500 }
+    );
   }
 }

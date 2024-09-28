@@ -1,24 +1,14 @@
-import mongoose, { Document, Schema } from 'mongoose';
+import mongoose, { Model } from 'mongoose';
 
-export interface Contact extends Document {
-  name: { type: string; required: true };
-  phone: { type: string; required: true };
-  eventId: {
-    type: mongoose.Schema.Types.ObjectId;
-    ref: 'Event';
-    required: true;
-  };
+interface IContact {
+  name: string;
+  phone: string;
+  eventId: mongoose.Types.ObjectId;
 }
 
-const contactSchema: Schema = new mongoose.Schema({
-  name: {
-    type: String,
-    required: true,
-  },
-  phone: {
-    type: String,
-    required: true,
-  },
+const ContactSchema = new mongoose.Schema<IContact>({
+  name: { type: String, required: true },
+  phone: { type: String, required: true },
   eventId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Event',
@@ -27,6 +17,7 @@ const contactSchema: Schema = new mongoose.Schema({
 });
 
 const Contact =
-  mongoose.models.Contact || mongoose.model<Contact>('Contact', contactSchema);
+  (mongoose.models.Contact as Model<IContact>) ||
+  mongoose.model<IContact>('Contact', ContactSchema);
 
 export default Contact;

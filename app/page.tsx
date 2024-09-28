@@ -4,7 +4,7 @@
 import { useState, useEffect } from 'react';
 import EventForm from '@/components/EventForm';
 import ContactForm from '@/components/ContactForm';
-import EventList from '@/components/EventList'; 
+import EventList from '@/components/EventList';
 import ContactList from '@/components/ContactList';
 
 interface Event {
@@ -21,7 +21,7 @@ interface Contact {
 
 export default function Home() {
   const [events, setEvents] = useState<Event[]>([]);
-  const [selectedEvent, setSelectedEvent] = useState<string>('');
+  const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
   const [contacts, setContacts] = useState<Contact[]>([]);
 
   useEffect(() => {
@@ -46,18 +46,18 @@ export default function Home() {
 
   const handleContactAdded = () => {
     if (selectedEvent) {
-      fetchContacts(selectedEvent);
+      fetchContacts(selectedEvent._id);
     }
   };
 
-  const handleEventSelected = (eventId: string) => {
-    setSelectedEvent(eventId);
-    fetchContacts(eventId);
+  const handleEventSelected = (event: Event) => {
+    setSelectedEvent(event);
+    fetchContacts(event._id);
   };
 
   const exportContacts = () => {
     if (selectedEvent) {
-      window.location.href = `/api/export?eventId=${selectedEvent}`;
+      window.location.href = `/api/export?eventId=${selectedEvent?._id}`;
     }
   };
 
@@ -71,7 +71,7 @@ export default function Home() {
         </div>
         <div>
           <ContactForm
-            eventId={selectedEvent}
+            eventId={selectedEvent?._id!}
             onContactAdded={handleContactAdded}
           />
           <ContactList contacts={contacts} />

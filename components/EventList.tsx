@@ -6,7 +6,7 @@ interface Event {
 
 interface EventListProps {
   events: Event[];
-  onEventSelected: (eventId: string) => void;
+  onEventSelected: (eventId: Event) => void;
 }
 
 const EventList: React.FC<EventListProps> = ({ events, onEventSelected }) => {
@@ -14,7 +14,14 @@ const EventList: React.FC<EventListProps> = ({ events, onEventSelected }) => {
     <div>
       <h2 className="text-xl font-semibold mb-2">Events</h2>
       <select
-        onChange={(e) => onEventSelected(e.target.value)}
+        onChange={(e) => {
+          const selectedEvent = events.find(
+            (event) => event._id === e.target.value
+          );
+          if (selectedEvent) {
+            onEventSelected(selectedEvent);
+          }
+        }}
         className="border p-2 w-full"
       >
         <option value="">Select an event</option>

@@ -1,4 +1,3 @@
-// src/app/api/contacts/route.ts
 import { NextResponse } from 'next/server';
 import connectDb from '@/lib/connectDb';
 import Contact from '@/models/contact';
@@ -11,7 +10,10 @@ export async function GET(request: Request) {
     const contacts = await Contact.find({ eventId });
     return NextResponse.json(contacts);
   } catch (error) {
-    return NextResponse.json({ success: false }, { status: 400 });
+    return NextResponse.json(
+      { success: false, error: 'Internal Server Error' },
+      { status: 500 }
+    );
   }
 }
 
@@ -22,6 +24,9 @@ export async function POST(request: Request) {
     const contact = await Contact.create(body);
     return NextResponse.json({ success: true, data: contact }, { status: 201 });
   } catch (error) {
-    return NextResponse.json({ success: false }, { status: 400 });
+    return NextResponse.json(
+      { success: false, error: 'Internal Server Error' },
+      { status: 500 }
+    );
   }
 }

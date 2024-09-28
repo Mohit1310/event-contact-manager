@@ -1,19 +1,15 @@
-import mongoose, { Document, model, models, Schema } from 'mongoose';
+import mongoose, { Model } from 'mongoose';
 
-export interface Event extends Document {
-  name: { type: string; required: true };
+interface IEvent {
+  name: string;
 }
 
-const eventSchema: Schema = new mongoose.Schema(
-  {
-    name: {
-      type: String,
-      required: true,
-    },
-  },
-  { timestamps: true }
-);
+const EventSchema = new mongoose.Schema<IEvent>({
+  name: { type: String, required: true },
+});
 
-const Event = models.Event || model<Event>('events', eventSchema);
+const Event =
+  (mongoose.models.Event as Model<IEvent>) ||
+  mongoose.model<IEvent>('Event', EventSchema);
 
 export default Event;
