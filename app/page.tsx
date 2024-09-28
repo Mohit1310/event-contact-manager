@@ -71,7 +71,7 @@ export default function Home() {
         </div>
         <div>
           <ContactForm
-            eventId={selectedEvent?._id!}
+            eventId={selectedEvent?._id}
             onContactAdded={handleContactAdded}
           />
           <ContactList contacts={contacts} />

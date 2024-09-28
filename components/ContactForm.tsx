@@ -2,7 +2,7 @@
 import { useState } from 'react';
 
 interface ContactFormProps {
-  eventId: string;
+  eventId: string | undefined;
   onContactAdded: () => void;
 }
 

@@ -37,7 +37,7 @@ export async function GET(request: Request) {
     });
   } catch (error) {
     return NextResponse.json(
-      { success: false, error: 'Internal Server Error' },
+      { success: false, error: `Internal Server Error: ${error}` },
       { status: 500 }
     );
   }
