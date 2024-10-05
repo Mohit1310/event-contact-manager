@@ -1,11 +1,12 @@
 // src/app/page.tsx
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import EventForm from '@/components/EventForm';
-import ContactForm from '@/components/ContactForm';
-import EventList from '@/components/EventList';
-import ContactList from '@/components/ContactList';
+import { useState, useEffect } from "react";
+
+import EventForm from "@/components/EventForm";
+import ContactForm from "@/components/ContactForm";
+import EventList from "@/components/EventList";
+import ContactList from "@/components/ContactList";
 
 interface Event {
   _id: string;
@@ -29,7 +30,7 @@ export default function Home() {
   }, []);
 
   const fetchEvents = async () => {
-    const res = await fetch('/api/events');
+    const res = await fetch("/api/events");
     const data = await res.json();
     setEvents(data);
   };
@@ -45,6 +46,18 @@ export default function Home() {
   };
 
   const handleContactAdded = () => {
+    if (selectedEvent) {
+      fetchContacts(selectedEvent._id);
+    }
+  };
+
+  const handleContactUpdated = () => {
+    if (selectedEvent) {
+      fetchContacts(selectedEvent._id);
+    }
+  };
+
+  const handleContactDeleted = () => {
     if (selectedEvent) {
       fetchContacts(selectedEvent._id);
     }
@@ -74,7 +87,12 @@ export default function Home() {
             eventId={selectedEvent?._id}
             onContactAdded={handleContactAdded}
           />
-          <ContactList contacts={contacts} />
+          <ContactList
+            eventId={selectedEvent?._id}
+            contacts={contacts}
+            onContactUpdated={handleContactUpdated}
+            onContactDeleted={handleContactDeleted}
+          />
           <button
             onClick={exportContacts}
             disabled={!selectedEvent}

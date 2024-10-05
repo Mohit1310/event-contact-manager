@@ -1,26 +1,53 @@
-// src/components/ContactForm.tsx
-import { useState } from 'react';
+import React, { useState } from "react";
+
+interface Contact {
+  _id?: string;
+  name: string;
+  phone: string;
+  eventId?: string;
+}
 
 interface ContactFormProps {
   eventId: string | undefined;
-  onContactAdded: () => void;
+  onContactAdded?: () => void;
+  initialContact?: Contact;
+  onContactUpdated?: () => void;
 }
 
 const ContactForm: React.FC<ContactFormProps> = ({
   eventId,
   onContactAdded,
+  initialContact,
+  onContactUpdated,
 }) => {
-  const [contact, setContact] = useState({ name: '', phone: '' });
+  const [contact, setContact] = useState<Contact>(
+    initialContact || { name: "", phone: "" }
+  );
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    await fetch('/api/contacts', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ ...contact, eventId }),
-    });
-    setContact({ name: '', phone: '' });
-    onContactAdded();
+    if (
+      initialContact &&
+      typeof initialContact._id === "string" &&
+      initialContact._id.trim() !== ""
+    ) {
+      // Update existing contact
+      await fetch(`/api/contacts?id=${initialContact._id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(contact),
+      });
+      onContactUpdated?.();
+    } else {
+      // Create new contact
+      await fetch("/api/contacts", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ...contact, eventId }),
+      });
+      setContact({ name: "", phone: "" });
+      onContactAdded?.();
+    }
   };
 
   return (
@@ -41,12 +68,8 @@ const ContactForm: React.FC<ContactFormProps> = ({
         required
         className="border p-2 mr-2"
       />
-      <button
-        type="submit"
-        disabled={!eventId}
-        className="bg-blue-500 text-white p-2 rounded disabled:bg-gray-300"
-      >
-        Add Contact
+      <button type="submit" className="bg-blue-500 text-white p-2 rounded">
+        {initialContact ? "Update Contact" : "Add Contact"}
       </button>
     </form>
   );
